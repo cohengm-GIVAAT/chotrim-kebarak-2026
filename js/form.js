@@ -218,9 +218,41 @@ async function submitForm() {
 // ── JSONP — עוקף CORS ────────────────────────────────────────
 function sendViaJsonp(payload) {
   return new Promise((resolve, reject) => {
-    const cbName  = "cb_" + Date.now();
-    const params  = new URLSearchParams({ ...payload, callback: cbName });
-    const url     = CONFIG.SHEET_URL + "?" + params.toString();
+    const cbName = "cb_" + Date.now();
+
+    // קצר ערכים ארוכים למניעת URL ארוך מדי
+    const slim = {
+      action:             payload.action,
+      callback:           cbName,
+      firstName:          payload.firstName,
+      lastName:           payload.lastName,
+      idNumber:           payload.idNumber,
+      age:                payload.age,
+      phone:              payload.phone,
+      email:              payload.email,
+      city:               payload.city || "",
+      participants:       payload.participants,
+      equip_kayak_single: payload.equip_kayak_single || 0,
+      equip_sup_single:   payload.equip_sup_single   || 0,
+      equip_kayak_double: payload.equip_kayak_double || 0,
+      shirt_S:            payload.shirt_S   || 0,
+      shirt_M:            payload.shirt_M   || 0,
+      shirt_L:            payload.shirt_L   || 0,
+      shirt_XL:           payload.shirt_XL  || 0,
+      shirt_XXL:          payload.shirt_XXL || 0,
+      hat_qty:            payload.hat_qty   || 0,
+      total:              payload.total     || 0,
+      payMethod:          payload.payMethod,
+      health:             payload.health,
+      street:             (payload.street   || "").substring(0, 30),
+      houseNum:           payload.houseNum  || "",
+      zipCode:            payload.zipCode   || "",
+      hearAbout:          payload.hearAbout || "",
+      timestamp:          payload.timestamp,
+    };
+
+    const params = new URLSearchParams(slim);
+    const url    = CONFIG.SHEET_URL + "?" + params.toString();
     let script;
 
     window[cbName] = function(data) {
@@ -237,8 +269,8 @@ function sendViaJsonp(payload) {
       if (script && script.parentNode) script.parentNode.removeChild(script);
     }
 
-    script        = document.createElement("script");
-    script.src    = url;
+    script         = document.createElement("script");
+    script.src     = url;
     script.onerror = () => { cleanup(); reject(new Error("שגיאת רשת")); };
 
     setTimeout(() => {
