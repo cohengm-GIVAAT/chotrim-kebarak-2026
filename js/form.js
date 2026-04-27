@@ -214,10 +214,9 @@ async function submitForm() {
   }
 }
 
-// ── שליחה ל-Google Sheets ───────────────────────────────────
+// ── שליחה ל-Google Sheets דרך POST + no-cors ───────────────
 async function sendToSheet(payload) {
-  // בנה URL עם הפרמטרים
-  const params = new URLSearchParams({
+  const data = {
     action:             payload.action,
     firstName:          payload.firstName,
     lastName:           payload.lastName,
@@ -244,14 +243,17 @@ async function sendToSheet(payload) {
     zipCode:            payload.zipCode   || "",
     hearAbout:          payload.hearAbout || "",
     timestamp:          payload.timestamp,
+  };
+
+  // שלח כ-POST עם text/plain (עובר no-cors בלי preflight)
+  await fetch(CONFIG.SHEET_URL, {
+    method:  "POST",
+    mode:    "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body:    JSON.stringify(data),
   });
 
-  const url = CONFIG.SHEET_URL + "?" + params.toString();
-
-  // שלח עם no-cors — לא מקבלים תגובה אבל הנתונים נשמרים
-  await fetch(url, { method: "GET", mode: "no-cors" });
-
-  // מספר הזמנה מקומי (no-cors לא מאפשר לקרוא תגובה)
+  // no-cors לא מחזיר תגובה — מספר הזמנה מקומי
   const orderNumber = "BL-" + String(Date.now()).slice(-4);
   return orderNumber;
 }
