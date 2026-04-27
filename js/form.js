@@ -269,11 +269,14 @@ function showSuccess(orderNumber, payload, total) {
   if (sumEl) sumEl.innerHTML = `
     <div class="fs-row"><span>מס׳ הזמנה</span><span><strong>${orderNumber}</strong></span></div>
     <div class="fs-row"><span>שם</span><span>${payload.firstName} ${payload.lastName}</span></div>
+    <div class="fs-row"><span>ת.ז</span><span>${payload.idNumber}</span></div>
+    <div class="fs-row"><span>מספר משתתפים</span><span>${payload.participants}</span></div>
     ${equipLines.length ? `<div class="fs-row"><span>ציוד</span><span>${equipLines.join(", ")}</span></div>` : ""}
     ${shirtLines.length ? `<div class="fs-row"><span>חולצות</span><span>${shirtLines.join(", ")}</span></div>` : ""}
     ${(payload.hat_qty||0) > 0 ? `<div class="fs-row"><span>כובעים</span><span>×${payload.hat_qty}</span></div>` : ""}
     <div class="fs-row total"><span>סה״כ לתשלום</span><span>₪${total}</span></div>
     <div class="fs-row"><span>הצהרת בריאות</span><span class="badge-green">נחתמה ✓</span></div>
+    ${total > 0 ? `<div class="fs-row"><span>תשלום</span><span class="badge-green">הועבר ל-PayBox ✓</span></div>` : `<div class="fs-row"><span>תשלום</span><span>ללא תשלום</span></div>`}
   `;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
