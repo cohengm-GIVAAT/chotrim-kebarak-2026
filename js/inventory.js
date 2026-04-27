@@ -41,8 +41,8 @@ function renderEquipCards() {
     const qty = getStock(item.id);
     const disabled = qty !== "?" && qty <= 0 ? "disabled" : "";
     const imgContent = item.photo
-      ? `<img src="${item.photo}" alt="${item.label}">`
-      : item.label;
+      ? `<img src="${item.photo}" alt="${item.label}" style="width:100%;height:100%;object-fit:cover;border-radius:6px">`
+      : `<span style="font-size:11px;color:#888">${item.label}</span>`;
     return `
       <div class="equip-card ${qty <= 0 && qty !== "?" ? "out-of-stock" : ""}">
         <div class="equip-img equip-img-${item.image}">${imgContent}</div>
@@ -81,4 +81,10 @@ function renderStockBadges() {
 }
 
 // ── טעינה ראשונית ───────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", loadInventory);
+document.addEventListener("DOMContentLoaded", () => {
+  // הצג כרטיסי ציוד מיד עם תמונות, לפני טעינת מלאי
+  renderEquipCards();
+  renderStockBadges();
+  // טען מלאי בפסקול
+  loadInventory();
+});
