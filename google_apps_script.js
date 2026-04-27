@@ -9,14 +9,18 @@ const SHEET_ID      = SpreadsheetApp.getActiveSpreadsheet().getId();
 const REG_SHEET     = "נרשמים";
 const INV_SHEET     = "מלאי";
 const EMAIL_FROM    = "חותרים כברק 2026";
-const PAYBOX_URL    = "https://payboxapp.page.link/YOUR_PAYBOX_LINK"; // ← שנה!
+const PAYBOX_URL    = "https://www.payboxapp.com/"; // ← שנה!
 
 // ── GET: מידע לאפליקציה ──────────────────────────────────────
 function doGet(e) {
-  const action = e.parameter.action || "inventory";
+  const action   = e.parameter.action || "inventory";
+  const callback = e.parameter.callback; // JSONP support
   let result;
 
-  if (action === "inventory") {
+  if (action === "submit") {
+    // קבלת הרשמה דרך GET (JSONP)
+    result = saveRegistration(e.parameter);
+  } else if (action === "inventory") {
     result = getInventory();
   } else if (action === "admin") {
     result = { rows: getRegistrations(), inventory: getInventory() };
@@ -24,8 +28,17 @@ function doGet(e) {
     result = { error: "unknown action" };
   }
 
+  const json = JSON.stringify(result);
+
+  // אם נשלח callback — מחזירים JSONP
+  if (callback) {
+    return ContentService
+      .createTextOutput(callback + "(" + json + ")")
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+
   return ContentService
-    .createTextOutput(JSON.stringify(result))
+    .createTextOutput(json)
     .setMimeType(ContentService.MimeType.JSON);
 }
 
