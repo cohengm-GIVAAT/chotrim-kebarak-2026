@@ -202,21 +202,16 @@ async function submitForm() {
     showSuccess(orderNumber, payload, total);
     // פתח PayBox רק אם יש תשלום
     if (total > 0) {
-      setTimeout(() => { window.open(CONFIG.PAYBOX_URL, "_blank"); }, 1200);
+      setTimeout(() => { window.location.href = CONFIG.PAYBOX_URL; }, 1200);
     }
   } catch (err) {
     console.error("submitForm error:", err);
-    // אם אין תשלום — מציג הצלחה גם אם ה-Sheet לא מגיב
-    if (total === 0) {
-      showSuccess("BL-" + Date.now().toString().slice(-4), payload, total);
-    } else {
-      const msgEl = document.getElementById("submitMsg");
-      if (msgEl) {
-        msgEl.textContent = "אירעה שגיאה בשליחה. נסה/י שוב.";
-        msgEl.classList.remove("hidden");
-      }
-      if (activeBtn) { activeBtn.disabled = false; activeBtn.textContent = "נסה שוב"; }
+    const msgEl = document.getElementById("submitMsg");
+    if (msgEl) {
+      msgEl.textContent = "אירעה שגיאה בשליחה: " + err.message + ". נסה/י שוב.";
+      msgEl.classList.remove("hidden");
     }
+    if (activeBtn) { activeBtn.disabled = false; activeBtn.textContent = "נסה שוב"; }
   }
 }
 
@@ -261,10 +256,23 @@ function showSuccess(orderNumber, payload, total) {
   const emailEl = document.getElementById("successEmail");
   if (emailEl) emailEl.textContent = "אישור נשלח לכתובת " + payload.email;
   const sumEl = document.getElementById("successSummary");
+  // בנה פירוט ציוד
+  const equipLines = CONFIG.EQUIPMENT_ITEMS
+    .filter(item => (payload["equip_" + item.id] || 0) > 0)
+    .map(item => item.label + " ×" + payload["equip_" + item.id]);
+
+  // בנה פירוט חולצות
+  const shirtLines = CONFIG.SHIRT_SIZES
+    .filter(sz => (payload["shirt_" + sz] || 0) > 0)
+    .map(sz => sz + "×" + payload["shirt_" + sz]);
+
   if (sumEl) sumEl.innerHTML = `
     <div class="fs-row"><span>מס׳ הזמנה</span><span><strong>${orderNumber}</strong></span></div>
     <div class="fs-row"><span>שם</span><span>${payload.firstName} ${payload.lastName}</span></div>
-    <div class="fs-row"><span>סה״כ לתשלום</span><span>₪${total}</span></div>
+    ${equipLines.length ? `<div class="fs-row"><span>ציוד</span><span>${equipLines.join(", ")}</span></div>` : ""}
+    ${shirtLines.length ? `<div class="fs-row"><span>חולצות</span><span>${shirtLines.join(", ")}</span></div>` : ""}
+    ${(payload.hat_qty||0) > 0 ? `<div class="fs-row"><span>כובעים</span><span>×${payload.hat_qty}</span></div>` : ""}
+    <div class="fs-row total"><span>סה״כ לתשלום</span><span>₪${total}</span></div>
     <div class="fs-row"><span>הצהרת בריאות</span><span class="badge-green">נחתמה ✓</span></div>
   `;
   window.scrollTo({ top: 0, behavior: "smooth" });
