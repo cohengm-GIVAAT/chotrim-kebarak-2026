@@ -9,65 +9,6 @@
 </head>
 <body class="admin-body">
 
-<!-- מסך סיסמה -->
-<div id="loginScreen" style="
-  position:fixed;inset:0;background:#1b3f6a;
-  display:flex;align-items:center;justify-content:center;z-index:999;">
-  <div style="background:#fff;border-radius:12px;padding:36px 40px;text-align:center;min-width:300px;direction:rtl;">
-    <div style="font-size:28px;margin-bottom:8px;">🚣</div>
-    <div style="font-size:18px;font-weight:bold;color:#1b3f6a;margin-bottom:4px;">חותרים כברק 2026</div>
-    <div style="font-size:13px;color:#888;margin-bottom:20px;">לוח ניהול — כניסה מורשים בלבד</div>
-    <input type="password" id="pwdInput" placeholder="הכנס סיסמה..." 
-      autocomplete="new-password" autocorrect="off" autocapitalize="off"
-      onkeydown="if(event.key==='Enter') checkPwd()"
-      style="width:100%;border:1px solid #cdd3da;border-radius:6px;padding:10px;font-size:14px;text-align:center;margin-bottom:12px;direction:ltr">
-    <button onclick="checkPwd()" style="width:100%;background:#1b3f6a;color:#fff;border:none;padding:10px;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer;">כניסה</button>
-    <div id="pwdError" style="color:#E24B4A;font-size:12px;margin-top:8px;display:none;">סיסמה שגויה. נסה שוב.</div>
-  </div>
-</div>
-
-
-
-<!-- מסך סיסמה -->
-<div id="loginScreen" style="
-  position:fixed;inset:0;background:#1b3f6a;
-  display:flex;align-items:center;justify-content:center;z-index:9999;">
-  <div style="background:#fff;border-radius:12px;padding:36px 40px;text-align:center;min-width:300px;direction:rtl;">
-    <div style="font-size:22px;font-weight:bold;color:#1b3f6a;margin-bottom:6px">חותרים כברק 2026</div>
-    <div style="font-size:13px;color:#666;margin-bottom:24px">לוח ניהול — כניסה מורשים בלבד</div>
-    <input type="password" id="pwInput" placeholder="סיסמה" onkeydown="if(event.key==='Enter')checkPw()"
-      style="width:100%;border:1.5px solid #cdd3da;border-radius:8px;padding:10px 14px;
-      font-size:14px;text-align:center;margin-bottom:12px;direction:ltr">
-    <button onclick="checkPw()" style="width:100%;background:#1b3f6a;color:#fff;border:none;
-      padding:10px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">
-      כניסה
-    </button>
-    <div id="pwError" style="color:#A32D2D;font-size:12px;margin-top:10px;display:none">
-      סיסמה שגויה — נסה שוב
-    </div>
-  </div>
-</div>
-
-<script>
-(function() {
-  const PW = "BarakLufan@2022";
-  if (sessionStorage.getItem("admin_ok") === "1") {
-    document.getElementById("loginScreen").style.display = "none";
-  }
-  window.checkPw = function() {
-    const v = document.getElementById("pwInput").value;
-    if (v === PW) {
-      sessionStorage.setItem("admin_ok", "1");
-      document.getElementById("loginScreen").style.display = "none";
-    } else {
-      document.getElementById("pwError").style.display = "block";
-      document.getElementById("pwInput").value = "";
-      document.getElementById("pwInput").focus();
-    }
-  };
-})();
-</script>
-
 <header class="admin-header">
   <div class="admin-header-inner">
     <div class="admin-logo-wrap">
@@ -202,22 +143,5 @@
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
 
-<script>
-function checkPwd() {
-  const pwd = document.getElementById("pwdInput").value;
-  if (pwd.trim() === "Barak2026") {
-    document.getElementById("loginScreen").style.display = "none";
-    sessionStorage.setItem("adminAuth", "1");
-  } else {
-    document.getElementById("pwdError").style.display = "block";
-    document.getElementById("pwdInput").value = "";
-    document.getElementById("pwdInput").focus();
-  }
-}
-// אם כבר מחובר בסשן הזה — דלג מיד
-if (sessionStorage.getItem("adminAuth") === "1") {
-  document.getElementById("loginScreen").style.display = "none";
-}
-</script>
 </body>
 </html>
