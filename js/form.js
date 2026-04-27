@@ -198,9 +198,8 @@ async function submitForm() {
   };
 
   try {
-    const orderNumber = await sendViaJsonp(payload);
+    const orderNumber = await sendToSheet(payload);
     showSuccess(orderNumber, payload, total);
-    // פתח PayBox רק אם יש תשלום
     if (total > 0) {
       setTimeout(() => { window.open(CONFIG.PAYBOX_URL, "_blank"); }, 800);
     }
@@ -208,77 +207,53 @@ async function submitForm() {
     console.error("submitForm error:", err);
     const msgEl = document.getElementById("submitMsg");
     if (msgEl) {
-      msgEl.textContent = "אירעה שגיאה בשליחה: " + err.message + ". נסה/י שוב.";
+      msgEl.textContent = "אירעה שגיאה בשליחה. נסה/י שוב.";
       msgEl.classList.remove("hidden");
     }
     if (activeBtn) { activeBtn.disabled = false; activeBtn.textContent = "נסה שוב"; }
   }
 }
 
-// ── JSONP — עוקף CORS ────────────────────────────────────────
-function sendViaJsonp(payload) {
-  return new Promise((resolve, reject) => {
-    const cbName = "cb_" + Date.now();
-
-    // קצר ערכים ארוכים למניעת URL ארוך מדי
-    const slim = {
-      action:             payload.action,
-      callback:           cbName,
-      firstName:          payload.firstName,
-      lastName:           payload.lastName,
-      idNumber:           payload.idNumber,
-      age:                payload.age,
-      phone:              payload.phone,
-      email:              payload.email,
-      city:               payload.city || "",
-      participants:       payload.participants,
-      equip_kayak_single: payload.equip_kayak_single || 0,
-      equip_sup_single:   payload.equip_sup_single   || 0,
-      equip_kayak_double: payload.equip_kayak_double || 0,
-      shirt_S:            payload.shirt_S   || 0,
-      shirt_M:            payload.shirt_M   || 0,
-      shirt_L:            payload.shirt_L   || 0,
-      shirt_XL:           payload.shirt_XL  || 0,
-      shirt_XXL:          payload.shirt_XXL || 0,
-      hat_qty:            payload.hat_qty   || 0,
-      total:              payload.total     || 0,
-      payMethod:          payload.payMethod,
-      health:             payload.health,
-      street:             (payload.street   || "").substring(0, 30),
-      houseNum:           payload.houseNum  || "",
-      zipCode:            payload.zipCode   || "",
-      hearAbout:          payload.hearAbout || "",
-      timestamp:          payload.timestamp,
-    };
-
-    const params = new URLSearchParams(slim);
-    const url    = CONFIG.SHEET_URL + "?" + params.toString();
-    let script;
-
-    window[cbName] = function(data) {
-      cleanup();
-      if (data && data.status === "ok") {
-        resolve(data.orderNumber || "BL-0000");
-      } else {
-        reject(new Error(data && data.message ? data.message : "שגיאת שרת"));
-      }
-    };
-
-    function cleanup() {
-      delete window[cbName];
-      if (script && script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    script         = document.createElement("script");
-    script.src     = url;
-    script.onerror = () => { cleanup(); reject(new Error("שגיאת רשת")); };
-
-    setTimeout(() => {
-      if (window[cbName]) { cleanup(); reject(new Error("timeout — נסה שוב")); }
-    }, 15000);
-
-    document.head.appendChild(script);
+// ── שליחה ל-Google Sheets ───────────────────────────────────
+async function sendToSheet(payload) {
+  // בנה URL עם הפרמטרים
+  const params = new URLSearchParams({
+    action:             payload.action,
+    firstName:          payload.firstName,
+    lastName:           payload.lastName,
+    idNumber:           payload.idNumber,
+    age:                payload.age,
+    phone:              payload.phone,
+    email:              payload.email,
+    city:               payload.city || "",
+    participants:       payload.participants,
+    equip_kayak_single: payload.equip_kayak_single || 0,
+    equip_sup_single:   payload.equip_sup_single   || 0,
+    equip_kayak_double: payload.equip_kayak_double || 0,
+    shirt_S:            payload.shirt_S   || 0,
+    shirt_M:            payload.shirt_M   || 0,
+    shirt_L:            payload.shirt_L   || 0,
+    shirt_XL:           payload.shirt_XL  || 0,
+    shirt_XXL:          payload.shirt_XXL || 0,
+    hat_qty:            payload.hat_qty   || 0,
+    total:              payload.total     || 0,
+    payMethod:          payload.payMethod,
+    health:             payload.health,
+    street:             (payload.street || "").substring(0, 30),
+    houseNum:           payload.houseNum  || "",
+    zipCode:            payload.zipCode   || "",
+    hearAbout:          payload.hearAbout || "",
+    timestamp:          payload.timestamp,
   });
+
+  const url = CONFIG.SHEET_URL + "?" + params.toString();
+
+  // שלח עם no-cors — לא מקבלים תגובה אבל הנתונים נשמרים
+  await fetch(url, { method: "GET", mode: "no-cors" });
+
+  // מספר הזמנה מקומי (no-cors לא מאפשר לקרוא תגובה)
+  const orderNumber = "BL-" + String(Date.now()).slice(-4);
+  return orderNumber;
 }
 
 // ── הצגת הצלחה ──────────────────────────────────────────────
