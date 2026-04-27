@@ -26,25 +26,7 @@
   </div>
 </div>
 
-<script>
-function checkPwd() {
-  const pwd = document.getElementById("pwdInput").value;
-  if (pwd.trim() === "Barak@2022") {
-    document.getElementById("loginScreen").style.display = "none";
-    sessionStorage.setItem("adminAuth", "1");
-  } else {
-    document.getElementById("pwdError").style.display = "block";
-    document.getElementById("pwdInput").value = "";
-    document.getElementById("pwdInput").focus();
-  }
-}
-// אם כבר מחובר בסשן הזה — דלג
-if (sessionStorage.getItem("adminAuth") === "1") {
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("loginScreen").style.display = "none";
-  });
-}
-</script>
+
 
 <!-- מסך סיסמה -->
 <div id="loginScreen" style="
@@ -219,5 +201,23 @@ if (sessionStorage.getItem("adminAuth") === "1") {
 
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
+
+<script>
+function checkPwd() {
+  const pwd = document.getElementById("pwdInput").value;
+  if (pwd.trim() === "Barak@2022") {
+    document.getElementById("loginScreen").style.display = "none";
+    sessionStorage.setItem("adminAuth", "1");
+  } else {
+    document.getElementById("pwdError").style.display = "block";
+    document.getElementById("pwdInput").value = "";
+    document.getElementById("pwdInput").focus();
+  }
+}
+// אם כבר מחובר בסשן הזה — דלג מיד
+if (sessionStorage.getItem("adminAuth") === "1") {
+  document.getElementById("loginScreen").style.display = "none";
+}
+</script>
 </body>
 </html>
