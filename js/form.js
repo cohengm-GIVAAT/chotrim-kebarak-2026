@@ -202,7 +202,7 @@ async function submitForm() {
     showSuccess(orderNumber, payload, total);
     // פתח PayBox רק אם יש תשלום
     if (total > 0) {
-      setTimeout(() => { window.location.href = CONFIG.PAYBOX_URL; }, 1200);
+      setTimeout(() => { window.open(CONFIG.PAYBOX_URL, "_blank"); }, 800);
     }
   } catch (err) {
     console.error("submitForm error:", err);
@@ -276,7 +276,11 @@ function showSuccess(orderNumber, payload, total) {
     ${(payload.hat_qty||0) > 0 ? `<div class="fs-row"><span>כובעים</span><span>×${payload.hat_qty}</span></div>` : ""}
     <div class="fs-row total"><span>סה״כ לתשלום</span><span>₪${total}</span></div>
     <div class="fs-row"><span>הצהרת בריאות</span><span class="badge-green">נחתמה ✓</span></div>
-    ${total > 0 ? `<div class="fs-row"><span>תשלום</span><span class="badge-green">הועבר ל-PayBox ✓</span></div>` : `<div class="fs-row"><span>תשלום</span><span>ללא תשלום</span></div>`}
+    ${total > 0 ? `<div class="fs-row"><span>תשלום</span><span class="badge-green">נפתח PayBox בטאב חדש ✓</span></div>` : `<div class="fs-row"><span>תשלום</span><span>ללא תשלום</span></div>`}
   `;
+
+  // כפתור סגירה
+  const closeWrap = document.getElementById("successCloseBtn");
+  if (closeWrap) closeWrap.classList.remove("hidden");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
