@@ -7,7 +7,6 @@ let formData = {};
 // ── ניווט בין שלבים ──────────────────────────────────────────
 function goStep(n) {
   if (n > currentStep && !validateStep(currentStep)) return;
-
   document.getElementById("step" + currentStep).classList.remove("active");
   document.querySelectorAll(".step").forEach(s => {
     const sn = parseInt(s.dataset.step);
@@ -18,7 +17,6 @@ function goStep(n) {
   const target = document.getElementById("step" + n) || document.getElementById("stepSuccess");
   target.classList.add("active");
   window.scrollTo({ top: 0, behavior: "smooth" });
-
   if (n === 4) renderFinalSummary();
 }
 
@@ -73,21 +71,20 @@ function updateSummary() {
   const hatQty   = parseInt(document.getElementById("hat_qty").value) || 0;
   const hatTotal = hatQty * prices.hat;
   const grand    = shirtTotal + hatTotal;
-
   document.getElementById("sum_shirts").textContent = "₪" + shirtTotal;
   document.getElementById("sum_hats").textContent   = "₪" + hatTotal;
   document.getElementById("sum_total").textContent  = "₪" + grand;
-  document.getElementById("payBtnAmt").textContent  = "₪" + grand;
+  const payBtn = document.getElementById("payBtnAmt");
+  if (payBtn) payBtn.textContent = "₪" + grand;
 }
 
 // ── סיכום סופי ──────────────────────────────────────────────
 function renderFinalSummary() {
-  const fn = document.getElementById("firstName").value;
-  const ln = document.getElementById("lastName").value;
-  const id = document.getElementById("idNumber").value;
+  const fn    = document.getElementById("firstName").value;
+  const ln    = document.getElementById("lastName").value;
+  const id    = document.getElementById("idNumber").value;
   const parts = document.getElementById("participants").value;
 
-  // ציוד
   let equipLines = [];
   CONFIG.EQUIPMENT_ITEMS.forEach(item => {
     const el = document.getElementById("equip_" + item.id);
@@ -97,7 +94,6 @@ function renderFinalSummary() {
     }
   });
 
-  // ביגוד
   let shirtLines = [], shirtTotal = 0;
   CONFIG.SHIRT_SIZES.forEach(sz => {
     const v = parseInt(document.getElementById("shirt_" + sz).value) || 0;
@@ -107,13 +103,11 @@ function renderFinalSummary() {
   const hatTotal = hatQty * CONFIG.PRICES.hat;
   const grand    = shirtTotal + hatTotal;
 
-  document.getElementById("sum_total").textContent = "₪" + grand;
-
-  // הצג תשלום או סיום חינמי לפי הסכום
   const paySection  = document.getElementById("paymentSection");
   const freeSection = document.getElementById("freeSection");
   if (grand > 0) {
-    document.getElementById("payBtnAmt").textContent = "₪" + grand;
+    const payBtn = document.getElementById("payBtnAmt");
+    if (payBtn) payBtn.textContent = "₪" + grand;
     if (paySection)  paySection.classList.remove("hidden");
     if (freeSection) freeSection.classList.add("hidden");
   } else {
@@ -132,19 +126,13 @@ function renderFinalSummary() {
   `;
 }
 
-// ── אמצעי תשלום: PayBox בלבד ────────────────────────────────
-function selectPay(method) {
-  selectedPayMethod = "paybox";
-  renderFinalSummary();
-}
-
-// ── שליחת הטופס ─────────────────────────────────────────────
+// ── שליחת הטופס — JSONP עוקף CORS ───────────────────────────
 async function submitForm() {
-  const btn = document.getElementById("submitBtn");
-  btn.disabled = true;
-  btn.textContent = "שולח...";
+  const submitBtn  = document.getElementById("submitBtn");
+  const freeBtn    = document.querySelector("#freeSection .btn-primary");
+  const activeBtn  = submitBtn && !submitBtn.closest(".hidden") ? submitBtn : freeBtn;
+  if (activeBtn) { activeBtn.disabled = true; activeBtn.textContent = "שולח..."; }
 
-  // איסוף נתונים
   const shirtQtys = {};
   CONFIG.SHIRT_SIZES.forEach(sz => {
     shirtQtys[sz] = parseInt(document.getElementById("shirt_" + sz).value) || 0;
@@ -156,71 +144,104 @@ async function submitForm() {
     equipQtys[item.id] = el ? (parseInt(el.value) || 0) : 0;
   });
 
-  const hatQty    = parseInt(document.getElementById("hat_qty").value) || 0;
-  const shirtSum  = CONFIG.SHIRT_SIZES.reduce((s, sz) => s + shirtQtys[sz] * CONFIG.PRICES.shirt, 0);
-  const total     = shirtSum + hatQty * CONFIG.PRICES.hat;
+  const hatQty   = parseInt(document.getElementById("hat_qty").value) || 0;
+  const shirtSum = CONFIG.SHIRT_SIZES.reduce((s, sz) => s + shirtQtys[sz] * CONFIG.PRICES.shirt, 0);
+  const total    = shirtSum + hatQty * CONFIG.PRICES.hat;
 
   const payload = {
-    action:       "submit",
-    firstName:    document.getElementById("firstName").value.trim(),
-    lastName:     document.getElementById("lastName").value.trim(),
-    idNumber:     document.getElementById("idNumber").value.trim(),
-    age:          document.getElementById("age").value,
-    phone:        document.getElementById("phone").value.trim(),
-    email:        document.getElementById("email").value.trim(),
-    street:       document.getElementById("street").value.trim(),
-    houseNum:     document.getElementById("houseNum").value.trim(),
-    city:         document.getElementById("city").value.trim(),
-    zipCode:      document.getElementById("zipCode").value.trim(),
-    participants: document.getElementById("participants").value,
-    hearAbout:    document.getElementById("hearAbout").value,
+    action:             "submit",
+    firstName:          document.getElementById("firstName").value.trim(),
+    lastName:           document.getElementById("lastName").value.trim(),
+    idNumber:           document.getElementById("idNumber").value.trim(),
+    age:                document.getElementById("age").value,
+    phone:              document.getElementById("phone").value.trim(),
+    email:              document.getElementById("email").value.trim(),
+    street:             document.getElementById("street").value.trim(),
+    houseNum:           document.getElementById("houseNum").value.trim(),
+    city:               document.getElementById("city").value.trim(),
+    zipCode:            document.getElementById("zipCode").value.trim(),
+    participants:       document.getElementById("participants").value,
+    hearAbout:          document.getElementById("hearAbout").value,
     equip_kayak_single: equipQtys["kayak_single"] || 0,
     equip_sup_single:   equipQtys["sup_single"]   || 0,
-    equip_kayak_double:   equipQtys["kayak_double"]   || 0,
-    shirt_S:   shirtQtys["S"],
-    shirt_M:   shirtQtys["M"],
-    shirt_L:   shirtQtys["L"],
-    shirt_XL:  shirtQtys["XL"],
-    shirt_XXL: shirtQtys["XXL"],
-    hat_qty:   hatQty,
-    total:     total,
-    payMethod: total > 0 ? 'paybox' : 'free',
-    signature: signatureData || "",
-    health:    "נחתם",
-    timestamp: new Date().toISOString(),
+    equip_kayak_double: equipQtys["kayak_double"] || 0,
+    shirt_S:            shirtQtys["S"],
+    shirt_M:            shirtQtys["M"],
+    shirt_L:            shirtQtys["L"],
+    shirt_XL:           shirtQtys["XL"],
+    shirt_XXL:          shirtQtys["XXL"],
+    hat_qty:            hatQty,
+    total:              total,
+    payMethod:          total > 0 ? "paybox" : "free",
+    health:             "נחתם",
+    timestamp:          new Date().toLocaleString("he-IL"),
   };
 
   try {
-    const res = await fetch(CONFIG.SHEET_URL, {
-      method: "POST",
-      body:   JSON.stringify(payload),
-    });
-    const data = await res.json();
-
-    if (data.status === "ok") {
-      // הצלחה
-      document.getElementById("step4").classList.remove("active");
-      document.getElementById("stepSuccess").classList.add("active");
-      document.getElementById("successEmail").textContent =
-        "אישור נשלח לכתובת " + payload.email;
-      document.getElementById("successSummary").innerHTML = `
-        <div class="fs-row"><span>מס׳ הזמנה</span><span><strong>${data.orderNumber}</strong></span></div>
-        <div class="fs-row"><span>שם</span><span>${payload.firstName} ${payload.lastName}</span></div>
-        <div class="fs-row"><span>סה״כ שולם</span><span>₪${total}</span></div>
-        <div class="fs-row"><span>הצהרת בריאות</span><span class="badge-green">נחתמה</span></div>
-      `;
-      // הפנייה ל-PayBox אם יש סכום לתשלום
-      if (total > 0) {
-        setTimeout(() => { window.open(CONFIG.PAYBOX_URL, "_blank"); }, 1200);
-      }
-    } else {
-      throw new Error(data.message || "שגיאה");
+    const orderNumber = await sendViaJsonp(payload);
+    showSuccess(orderNumber, payload, total);
+    if (total > 0) {
+      setTimeout(() => { window.open(CONFIG.PAYBOX_URL, "_blank"); }, 1200);
     }
   } catch (err) {
-    document.getElementById("submitMsg").textContent =
-      "אירעה שגיאה בשליחה: " + err.message + ". נסה/י שוב.";
-    document.getElementById("submitMsg").classList.remove("hidden");
-    btn.disabled = false;
-    btn.textContent = "נסה שוב";
+    const msgEl = document.getElementById("submitMsg");
+    if (msgEl) {
+      msgEl.textContent = "אירעה שגיאה בשליחה. נסה/י שוב.";
+      msgEl.classList.remove("hidden");
+    }
+    if (activeBtn) { activeBtn.disabled = false; activeBtn.textContent = "נסה שוב"; }
+    console.error(err);
   }
+}
+
+// ── JSONP — עוקף CORS ────────────────────────────────────────
+function sendViaJsonp(payload) {
+  return new Promise((resolve, reject) => {
+    const cbName = "cb_" + Date.now();
+    const params = new URLSearchParams({ ...payload, callback: cbName });
+    const url    = CONFIG.SHEET_URL + "?" + params.toString();
+
+    window[cbName] = function(data) {
+      delete window[cbName];
+      try { document.head.removeChild(script); } catch(e) {}
+      if (data && data.status === "ok") {
+        resolve(data.orderNumber || "BL-0000");
+      } else {
+        reject(new Error(data && data.message ? data.message : "שגיאה"));
+      }
+    };
+
+    const script   = document.createElement("script");
+    script.src     = url;
+    script.onerror = () => {
+      delete window[cbName];
+      try { document.head.removeChild(script); } catch(e) {}
+      reject(new Error("שגיאת רשת"));
+    };
+
+    setTimeout(() => {
+      if (window[cbName]) {
+        delete window[cbName];
+        try { document.head.removeChild(script); } catch(e) {}
+        reject(new Error("timeout"));
+      }
+    }, 15000);
+
+    document.head.appendChild(script);
+  });
+}
+
+// ── הצגת הצלחה ──────────────────────────────────────────────
+function showSuccess(orderNumber, payload, total) {
+  document.getElementById("step4").classList.remove("active");
+  document.getElementById("stepSuccess").classList.add("active");
+  document.getElementById("successEmail").textContent =
+    "אישור נשלח לכתובת " + payload.email;
+  document.getElementById("successSummary").innerHTML = `
+    <div class="fs-row"><span>מס׳ הזמנה</span><span><strong>${orderNumber}</strong></span></div>
+    <div class="fs-row"><span>שם</span><span>${payload.firstName} ${payload.lastName}</span></div>
+    <div class="fs-row"><span>סה״כ לתשלום</span><span>₪${total}</span></div>
+    <div class="fs-row"><span>הצהרת בריאות</span><span class="badge-green">נחתמה ✓</span></div>
+  `;
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
