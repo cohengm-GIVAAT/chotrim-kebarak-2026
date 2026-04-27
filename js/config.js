@@ -6,10 +6,10 @@
 const CONFIG = {
 
   // ► שנה לכתובת ה-Apps Script Web App שלך (ראה SETUP.md)
-  SHEET_URL: "https://script.google.com/macros/s/AKfycbxqrKwkLpL55cnOAnWxhBKsiPMjI38aPNOAcJz2u6-pfqlrJyhCsintEOga4CqvBSJg3w/exec",
+  SHEET_URL: "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec",
 
   // ► קישור ל-PayBox האישי שלך
-  PAYBOX_URL: "https://www.payboxapp.com",
+  PAYBOX_URL: "https://payboxapp.page.link/YOUR_PAYBOX_LINK",
 
   // פרטי האירוע
   EVENT_NAME: "חותרים כברק 2026",
@@ -24,9 +24,9 @@ const CONFIG = {
 
   // שדות ציוד (שמות חייבים להתאים לגיליון המלאי)
   EQUIPMENT_ITEMS: [
-    { id: "kayak_single", label: "קייאק יחיד",  image: "kayak_single" },
-    { id: "sup_single",   label: "סאפ יחיד",    image: "sup_single"   },
-    { id: "kayak_double",   label: "קייאק זוגי",    image: "kayak_double"   },
+    { id: "kayak_single", label: "קייאק יחיד", image: "kayak_single", photo: "images/kayak_single.jpg" },
+    { id: "sup_single",   label: "סאפ יחיד",   image: "sup_single",   photo: "images/sup_single.jpg"   },
+    { id: "kayak_double", label: "קייאק זוגי", image: "kayak_double", photo: "images/kayak_double.jpg" },
   ],
 
   // מידות חולצה
