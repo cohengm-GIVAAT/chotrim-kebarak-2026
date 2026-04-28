@@ -241,6 +241,19 @@ async function submitForm() {
   };
 
   try {
+    // שלב 1 — בדיקת כפילות ת.ז דרך JSONP (מקבלים תגובה)
+    const dupResult = await checkDuplicateJsonp(payload.idNumber);
+    if (dupResult && dupResult.duplicate) {
+      const msgEl = document.getElementById("submitMsg");
+      if (msgEl) {
+        msgEl.textContent = "תעודת זהות " + payload.idNumber + " כבר רשומה במערכת (" + dupResult.orderNumber + "). לא ניתן להירשם פעמיים.";
+        msgEl.classList.remove("hidden");
+      }
+      if (activeBtn) { activeBtn.disabled = false; activeBtn.textContent = "נסה שוב"; }
+      return;
+    }
+
+    // שלב 2 — שמירה
     const orderNumber = await sendToSheet(payload);
     showSuccess(orderNumber, payload, total);
     if (total > 0) {
@@ -299,6 +312,39 @@ async function sendToSheet(payload) {
   // no-cors לא מחזיר תגובה — מספר הזמנה מקומי
   const orderNumber = "BL-" + String(Date.now()).slice(-4);
   return orderNumber;
+}
+
+// ── בדיקת כפילות ת.ז דרך JSONP ─────────────────────────────
+function checkDuplicateJsonp(idNumber) {
+  return new Promise((resolve) => {
+    const cbName = "dup_" + Date.now();
+    const url    = CONFIG.SHEET_URL + "?action=checkDuplicate&idNumber=" + encodeURIComponent(idNumber) + "&callback=" + cbName;
+    let script;
+
+    window[cbName] = function(data) {
+      delete window[cbName];
+      if (script && script.parentNode) script.parentNode.removeChild(script);
+      resolve(data);
+    };
+
+    script         = document.createElement("script");
+    script.src     = url;
+    script.onerror = () => {
+      delete window[cbName];
+      if (script && script.parentNode) script.parentNode.removeChild(script);
+      resolve(null); // אם נכשל — ממשיך בלי בדיקה
+    };
+
+    setTimeout(() => {
+      if (window[cbName]) {
+        delete window[cbName];
+        try { document.head.removeChild(script); } catch(e) {}
+        resolve(null);
+      }
+    }, 5000);
+
+    document.head.appendChild(script);
+  });
 }
 
 // ── הצגת הצלחה ──────────────────────────────────────────────
