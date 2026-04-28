@@ -319,6 +319,11 @@ function showSuccess(orderNumber, payload, total) {
     .map(sz => sz + "×" + payload["shirt_" + sz]);
 
   if (sumEl) sumEl.innerHTML = `
+    ${total > 0 ? `
+    <div style="border:2px solid #E24B4A;border-radius:8px;padding:12px 16px;background:#FCEBEB;margin-bottom:14px;text-align:center;">
+      <div style="font-size:15px;font-weight:bold;color:#A32D2D;margin-bottom:4px;">⚠️ יש להשלים תשלום ב-PayBox</div>
+      <div style="font-size:13px;color:#A32D2D;">במידה ולא יתקבל תשלום — הפריטים לא יישמרו!</div>
+    </div>` : ""}
     <div class="fs-row"><span>מס׳ הזמנה</span><span><strong>${orderNumber}</strong></span></div>
     <div class="fs-row"><span>שם</span><span>${payload.firstName} ${payload.lastName}</span></div>
     <div class="fs-row"><span>ת.ז</span><span>${payload.idNumber}</span></div>
