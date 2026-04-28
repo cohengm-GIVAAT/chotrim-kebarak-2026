@@ -36,11 +36,54 @@ function validateStep(step) {
       if (!el || !el.value.trim()) { if(el) showError(el, f.msg); return false; }
       el.classList.remove("error");
     }
-    const id = document.getElementById("idNumber").value;
-    if (!/^\d{9}$/.test(id)) {
-      showError(document.getElementById("idNumber"), "תעודת זהות חייבת להיות 9 ספרות");
+
+    // ת.ז — 9 ספרות
+    const idEl = document.getElementById("idNumber");
+    if (!/^\d{9}$/.test(idEl.value)) {
+      showError(idEl, "תעודת זהות חייבת להיות 9 ספרות");
       return false;
     }
+
+    // גיל — מינימום 12
+    const ageEl = document.getElementById("age");
+    const age = parseInt(ageEl.value);
+    if (isNaN(age) || age < 12) {
+      showError(ageEl, "גיל מינימלי להרשמה הוא 12");
+      alert("גיל מינימלי להרשמה הוא 12 שנים.");
+      return false;
+    }
+
+    // טלפון — חייב להתחיל ב-05 ו-10 ספרות
+    const phoneEl = document.getElementById("phone");
+    const phone = phoneEl.value.replace(/[-\s]/g, "");
+    if (!/^05\d{8}$/.test(phone)) {
+      showError(phoneEl, "טלפון חייב להתחיל ב-05 ולכלול 10 ספרות");
+      alert("מספר הטלפון חייב להתחיל בקידומת 05 ולכלול 10 ספרות.");
+      return false;
+    }
+
+    // מייל — אותיות אנגלית בלבד (לא עברית/ערבית)
+    const emailEl = document.getElementById("email");
+    if (/[^ -]/.test(emailEl.value)) {
+      showError(emailEl, "כתובת המייל חייבת להיות באותיות אנגלית בלבד");
+      alert("כתובת המייל חייבת להיות באותיות אנגלית בלבד.");
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
+      showError(emailEl, "כתובת מייל לא תקינה");
+      alert("נא להזין כתובת מייל תקינה.");
+      return false;
+    }
+
+    // מספר משתתפים — מקסימום 3
+    const partEl = document.getElementById("participants");
+    const parts = parseInt(partEl.value);
+    if (isNaN(parts) || parts < 1 || parts > 3) {
+      showError(partEl, "מקסימום 3 משתתפים להזמנה");
+      alert("מספר המשתתפים המקסימלי להזמנה הוא 3.");
+      return false;
+    }
+
     return true;
   }
   if (step === 3) {
