@@ -3,6 +3,16 @@
 let currentStep = 1;
 let formData = {};
 
+// ── עדכון שדות משתתפים נוספים ───────────────────────────────
+function updateGuests() {
+  const n = parseInt(document.getElementById("participants").value) || 1;
+  document.getElementById("guest2").style.display = n >= 2 ? "block" : "none";
+  document.getElementById("guest3").style.display = n >= 3 ? "block" : "none";
+  // נקה שדות שנסגרו
+  if (n < 2) { document.getElementById("guest2Name").value = ""; document.getElementById("guest2Id").value = ""; }
+  if (n < 3) { document.getElementById("guest3Name").value = ""; document.getElementById("guest3Id").value = ""; }
+}
+
 // ── ניווט בין שלבים ──────────────────────────────────────────
 function goStep(n) {
   if (n > currentStep && !validateStep(currentStep)) return;
@@ -82,6 +92,20 @@ function validateStep(step) {
       showError(partEl, "מקסימום 3 משתתפים להזמנה");
       alert("מספר המשתתפים המקסימלי להזמנה הוא 3.");
       return false;
+    }
+
+    // ולידציה משתתפים נוספים
+    if (parts >= 2) {
+      const g2name = document.getElementById("guest2Name").value.trim();
+      const g2id   = document.getElementById("guest2Id").value.trim();
+      if (!g2name) { alert("נא להזין שם מלא למשתתף 2"); return false; }
+      if (!/^\d{9}$/.test(g2id)) { alert("ת.ז של משתתף 2 חייבת להיות 9 ספרות"); return false; }
+    }
+    if (parts >= 3) {
+      const g3name = document.getElementById("guest3Name").value.trim();
+      const g3id   = document.getElementById("guest3Id").value.trim();
+      if (!g3name) { alert("נא להזין שם מלא למשתתף 3"); return false; }
+      if (!/^\d{9}$/.test(g3id)) { alert("ת.ז של משתתף 3 חייבת להיות 9 ספרות"); return false; }
     }
 
     return true;
@@ -225,6 +249,10 @@ async function submitForm() {
     zipCode:            (document.getElementById("zipCode")  || {value:""}).value.trim(),
     participants:       document.getElementById("participants").value,
     hearAbout:          (document.getElementById("hearAbout") || {value:""}).value,
+    guest2Name:         (document.getElementById("guest2Name") || {value:""}).value.trim(),
+    guest2Id:           (document.getElementById("guest2Id")   || {value:""}).value.trim(),
+    guest3Name:         (document.getElementById("guest3Name") || {value:""}).value.trim(),
+    guest3Id:           (document.getElementById("guest3Id")   || {value:""}).value.trim(),
     equip_kayak_single: equipQtys["kayak_single"] || 0,
     equip_sup_single:   equipQtys["sup_single"]   || 0,
     equip_kayak_double: equipQtys["kayak_double"] || 0,
