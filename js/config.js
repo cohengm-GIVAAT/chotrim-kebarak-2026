@@ -6,7 +6,7 @@
 const CONFIG = {
 
   // ► שנה לכתובת ה-Apps Script Web App שלך (ראה SETUP.md)
-SHEET_URL: "https://script.google.com/macros/s/AKfycbw28BLxXp197TNvX8gEDZU_HPWzw156tnoT_4Zu2WMOpDc9s1jSELxyOrVyQTClHjQ8/exec",
+SHEET_URL: "https://script.google.com/macros/s/AKfycbx8sY_pLoHhfmkG0RxNt3r04a3TrimtfvtTQNzPriERfY2JAuiX8jh6r1HplODTPaji/exec",
   
   // ► קישור ל-PayBox האישי שלך
   PAYBOX_URL: "https://www.payboxapp.com/",
