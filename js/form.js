@@ -327,6 +327,10 @@ async function sendToSheet(payload) {
     zipCode:            payload.zipCode   || "",
     hearAbout:          payload.hearAbout || "",
     timestamp:          payload.timestamp,
+    guest2Name:         payload.guest2Name || "",
+    guest2Id:           payload.guest2Id   || "",
+    guest3Name:         payload.guest3Name || "",
+    guest3Id:           payload.guest3Id   || "",
   };
 
   // שלח כ-POST עם text/plain (עובר no-cors בלי preflight)
