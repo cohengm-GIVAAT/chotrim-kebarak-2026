@@ -9,8 +9,16 @@ function updateGuests() {
   document.getElementById("guest2").style.display = n >= 2 ? "block" : "none";
   document.getElementById("guest3").style.display = n >= 3 ? "block" : "none";
   // נקה שדות שנסגרו
-  if (n < 2) { document.getElementById("guest2Name").value = ""; document.getElementById("guest2Id").value = ""; }
-  if (n < 3) { document.getElementById("guest3Name").value = ""; document.getElementById("guest3Id").value = ""; }
+  if (n < 2) { 
+    document.getElementById("guest2Name").value = ""; 
+    document.getElementById("guest2Id").value = ""; 
+    document.getElementById("guest2Age").value = ""; 
+  }
+  if (n < 3) { 
+    document.getElementById("guest3Name").value = ""; 
+    document.getElementById("guest3Id").value = ""; 
+    document.getElementById("guest3Age").value = ""; 
+  }
 }
 
 // ── ניווט בין שלבים ──────────────────────────────────────────
@@ -98,14 +106,18 @@ function validateStep(step) {
     if (parts >= 2) {
       const g2name = document.getElementById("guest2Name").value.trim();
       const g2id   = document.getElementById("guest2Id").value.trim();
+      const g2age  = parseInt(document.getElementById("guest2Age").value);
       if (!g2name) { alert("נא להזין שם מלא למשתתף 2"); return false; }
       if (!/^\d{9}$/.test(g2id)) { alert("ת.ז של משתתף 2 חייבת להיות 9 ספרות"); return false; }
+      if (isNaN(g2age) || g2age < 12) { alert("גיל מינימלי למשתתף 2 הוא 12"); return false; }
     }
     if (parts >= 3) {
       const g3name = document.getElementById("guest3Name").value.trim();
       const g3id   = document.getElementById("guest3Id").value.trim();
+      const g3age  = parseInt(document.getElementById("guest3Age").value);
       if (!g3name) { alert("נא להזין שם מלא למשתתף 3"); return false; }
       if (!/^\d{9}$/.test(g3id)) { alert("ת.ז של משתתף 3 חייבת להיות 9 ספרות"); return false; }
+      if (isNaN(g3age) || g3age < 12) { alert("גיל מינימלי למשתתף 3 הוא 12"); return false; }
     }
 
     return true;
@@ -248,11 +260,12 @@ async function submitForm() {
     city:               (document.getElementById("city")     || {value:""}).value.trim(),
     zipCode:            (document.getElementById("zipCode")  || {value:""}).value.trim(),
     participants:       document.getElementById("participants").value,
-    hearAbout:          (document.getElementById("hearAbout") || {value:""}).value,
     guest2Name:         (document.getElementById("guest2Name") || {value:""}).value.trim(),
     guest2Id:           (document.getElementById("guest2Id")   || {value:""}).value.trim(),
+    guest2Age:          (document.getElementById("guest2Age")  || {value:""}).value.trim(),
     guest3Name:         (document.getElementById("guest3Name") || {value:""}).value.trim(),
     guest3Id:           (document.getElementById("guest3Id")   || {value:""}).value.trim(),
+    guest3Age:          (document.getElementById("guest3Age")  || {value:""}).value.trim(),
     equip_kayak_single: equipQtys["kayak_single"] || 0,
     equip_sup_single:   equipQtys["sup_single"]   || 0,
     equip_kayak_double: equipQtys["kayak_double"] || 0,
@@ -325,12 +338,13 @@ async function sendToSheet(payload) {
     street:             (payload.street || "").substring(0, 30),
     houseNum:           payload.houseNum  || "",
     zipCode:            payload.zipCode   || "",
-    hearAbout:          payload.hearAbout || "",
     timestamp:          payload.timestamp,
     guest2Name:         payload.guest2Name || "",
     guest2Id:           payload.guest2Id   || "",
+    guest2Age:          payload.guest2Age  || "",
     guest3Name:         payload.guest3Name || "",
     guest3Id:           payload.guest3Id   || "",
+    guest3Age:          payload.guest3Age  || "",
   };
 
   // שלח כ-POST עם text/plain (עובר no-cors בלי preflight)
