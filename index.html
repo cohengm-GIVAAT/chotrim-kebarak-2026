@@ -159,6 +159,7 @@
         <div class="merch-thumb shirt-thumb"><img src="images/shirt.jpg" alt="חולצת חותרים כברק" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;border-radius:6px"></div>
         <div class="merch-details">
           <div class="merch-name">חולצת מועדון — חותרים כברק</div>
+          <div id="shirt_counter" style="font-size:13px;color:#2A7A4F;margin:4px 0 8px;transition:color 0.2s">בחרת 0 מתוך 1 מותר</div>
           <div class="merch-price">₪40 ליחידה</div>
           <div class="shirt-sizes">
             <div class="size-field" data-size="S">
@@ -195,6 +196,7 @@
         <div class="merch-thumb hat-thumb"><img src="images/hat.jpg" alt="כובע חותרים כברק" style="width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:6px"></div>
         <div class="merch-details">
           <div class="merch-name">כובע — חותרים כברק</div>
+          <div id="hat_counter" style="font-size:13px;color:#2A7A4F;margin:4px 0 8px;transition:color 0.2s">בחרת 0 מתוך 1 מותר</div>
           <div class="merch-price">₪40 ליחידה</div>
           <div class="hat-row">
             <label>כמות:</label>
@@ -213,7 +215,7 @@
 
       <div class="step-nav">
         <button class="btn btn-ghost" onclick="goStep(1)">← חזרה</button>
-        <button class="btn btn-primary" onclick="goStep(3)">המשך להצהרת בריאות ←</button>
+        <button id="btn_step2_next" class="btn btn-primary" onclick="goStep(3)">המשך להצהרת בריאות ←</button>
       </div>
     </section>
 
