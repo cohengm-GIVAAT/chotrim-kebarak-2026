@@ -6,6 +6,7 @@ let formData = {};
 // ── עדכון שדות משתתפים נוספים ───────────────────────────────
 function updateGuests() {
   const n = parseInt(document.getElementById("participants").value) || 1;
+  updateItemCounters();
   document.getElementById("guest2").style.display = n >= 2 ? "block" : "none";
   document.getElementById("guest3").style.display = n >= 3 ? "block" : "none";
   // נקה שדות שנסגרו
@@ -163,6 +164,50 @@ function updateSummary() {
   if (h) h.textContent = "₪" + hatTotal;
   if (t) t.textContent = "₪" + grand;
   if (p) p.textContent = "₪" + grand;
+  updateItemCounters();
+}
+
+// ── מונה חולצות וכובעים בזמן אמת ──────────────────────────────
+function updateItemCounters() {
+  const participants = parseInt(document.getElementById("participants")?.value) || 1;
+
+  // סכום חולצות
+  let shirtCount = 0;
+  CONFIG.SHIRT_SIZES.forEach(sz => {
+    const el = document.getElementById("shirt_" + sz);
+    shirtCount += el ? (parseInt(el.value) || 0) : 0;
+  });
+
+  // סכום כובעים
+  const hatEl = document.getElementById("hat_qty");
+  const hatCount = hatEl ? (parseInt(hatEl.value) || 0) : 0;
+
+  // עדכון מונה חולצות
+  const shirtCounter = document.getElementById("shirt_counter");
+  if (shirtCounter) {
+    const shirtOver = shirtCount > participants;
+    shirtCounter.textContent = "בחרת " + shirtCount + " מתוך " + participants + " מותר";
+    shirtCounter.style.color = shirtOver ? "#E24B4A" : "#2A7A4F";
+    shirtCounter.style.fontWeight = shirtOver ? "bold" : "normal";
+  }
+
+  // עדכון מונה כובעים
+  const hatCounter = document.getElementById("hat_counter");
+  if (hatCounter) {
+    const hatOver = hatCount > participants;
+    hatCounter.textContent = "בחרת " + hatCount + " מתוך " + participants + " מותר";
+    hatCounter.style.color = hatOver ? "#E24B4A" : "#2A7A4F";
+    hatCounter.style.fontWeight = hatOver ? "bold" : "normal";
+  }
+
+  // חסום/שחרר כפתור המשך
+  const nextBtn = document.getElementById("btn_step2_next");
+  if (nextBtn) {
+    const blocked = shirtCount > participants || hatCount > participants;
+    nextBtn.disabled = blocked;
+    nextBtn.style.opacity = blocked ? "0.5" : "1";
+    nextBtn.title = blocked ? "יש להפחית כמות חולצות או כובעים" : "";
+  }
 }
 
 // ── סיכום סופי בדף תשלום ─────────────────────────────────────
