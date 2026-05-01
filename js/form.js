@@ -421,11 +421,6 @@ function showSuccess(orderNumber, payload, total) {
       <div style="font-size:12px;color:#555;margin-bottom:8px;">קבוצה שקטה של משתתפי האירוע</div>
       <a href="https://chat.whatsapp.com/KWmKgysyg9DC7amseoo4Y5" target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:bold;">הצטרף לקבוצה</a>
     </div>
-    <div style="border:2px solid #0F6E56;border-radius:8px;padding:12px 16px;background:#EAF3DE;margin-bottom:14px;text-align:center;">
-      <div style="font-size:14px;font-weight:bold;color:#0F6E56;margin-bottom:6px;">📱 הצטרף לקבוצת הוואטסאפ</div>
-      <div style="font-size:12px;color:#555;margin-bottom:8px;">קבוצה שקטה של משתתפי האירוע</div>
-      <a href="https://chat.whatsapp.com/KWmKgysyg9DC7amseoo4Y5" target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:bold;">הצטרף לקבוצה</a>
-    </div>
     <div class="fs-row"><span>מס׳ הזמנה</span><span><strong>${orderNumber}</strong></span></div>
     <div class="fs-row"><span>שם</span><span>${payload.firstName} ${payload.lastName}</span></div>
     <div class="fs-row"><span>ת.ז</span><span>${payload.idNumber}</span></div>
