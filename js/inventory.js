@@ -6,7 +6,8 @@ async function loadInventory() {
   try {
     const res  = await fetch(CONFIG.SHEET_URL + "?action=inventory");
     const data = await res.json();
-    inventoryCache = data.inventory || {};
+    // Apps Script מחזיר את המלאי ישירות (לא עטוף ב-{inventory:...})
+    inventoryCache = data.inventory || data || {};
     renderEquipCards();
     renderStockBadges();
   } catch (e) {
