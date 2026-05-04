@@ -39,6 +39,19 @@ function goStep(n) {
 }
 
 // ── ולידציה לפי שלב ─────────────────────────────────────────
+
+// ── בדיקת תקינות ת.ז ישראלית (אלגוריתם לון) ─────────────────
+function isValidIsraeliID(id) {
+  if (!/^\d{9}$/.test(id)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    let digit = parseInt(id[i]) * ((i % 2) + 1);
+    if (digit > 9) digit -= 9;
+    sum += digit;
+  }
+  return sum % 10 === 0;
+}
+
 function validateStep(step) {
   if (step === 1) {
     const fields = [
@@ -56,10 +69,14 @@ function validateStep(step) {
       el.classList.remove("error");
     }
 
-    // ת.ז — 9 ספרות
+    // ת.ז — 9 ספרות + בדיקת תקינות (אלגוריתם לון)
     const idEl = document.getElementById("idNumber");
     if (!/^\d{9}$/.test(idEl.value)) {
       showError(idEl, "תעודת זהות חייבת להיות 9 ספרות");
+      return false;
+    }
+    if (!isValidIsraeliID(idEl.value)) {
+      showError(idEl, "תעודת זהות אינה תקינה — נא לבדוק שוב");
       return false;
     }
 
@@ -130,6 +147,29 @@ function validateStep(step) {
     if (!signed)  { alert("יש לחתום בחתימה דיגיטלית"); return false; }
     return true;
   }
+  if (step === 2) {
+    const participants = parseInt(document.getElementById("participants")?.value) || 1;
+
+    // בדיקת סך חולצות
+    let shirtCount = 0;
+    CONFIG.SHIRT_SIZES.forEach(sz => {
+      const el = document.getElementById("shirt_" + sz);
+      shirtCount += el ? (parseInt(el.value) || 0) : 0;
+    });
+    if (shirtCount > participants) {
+      alert("סך החולצות (" + shirtCount + ") לא יכול לעלות על מספר המשתתפים (" + participants + ")");
+      return false;
+    }
+
+    // בדיקת סך כובעים
+    const hatEl = document.getElementById("hat_qty");
+    const hatCount = hatEl ? (parseInt(hatEl.value) || 0) : 0;
+    if (hatCount > participants) {
+      alert("סך הכובעים (" + hatCount + ") לא יכול לעלות על מספר המשתתפים (" + participants + ")");
+      return false;
+    }
+  }
+
   return true;
 }
 
