@@ -34,6 +34,25 @@ function stockLabel(qty) {
   return "זמין: " + qty;
 }
 
+
+// ── הגבלות מקסימום לפריט ─────────────────────────────────────
+const EQUIP_MAX = {
+  kayak_single: 3,
+  sup_single:   3,
+  kayak_double: 1,
+};
+
+function clampEquip(el) {
+  const id       = el.id.replace("equip_", "");
+  const stock    = parseInt(el.max) || 99;
+  const itemMax  = EQUIP_MAX[id] !== undefined ? EQUIP_MAX[id] : 99;
+  const allowed  = Math.min(stock, itemMax);
+  const val      = parseInt(el.value) || 0;
+  if (val > allowed) {
+    el.value = 0;
+  }
+}
+
 // ── כרטיסי ציוד ─────────────────────────────────────────────
 function renderEquipCards() {
   const grid = document.getElementById("equipGrid");
@@ -51,9 +70,9 @@ function renderEquipCards() {
         <div class="equip-stock ${stockClass(qty)}">${stockLabel(qty)}</div>
         <div class="equip-qty-row">
           <label>כמות:</label>
-          <input type="number" id="equip_${item.id}" min="0" max="${qty !== "?" ? qty : 99}"
+          <input type="number" id="equip_${item.id}" min="0" max="${qty !== "?" ? Math.min(qty, EQUIP_MAX[item.id] !== undefined ? EQUIP_MAX[item.id] : 99) : 99}"
                  value="0"
-                 oninput="this.value=Math.min(Math.max(0,parseInt(this.value)||0),parseInt(this.max||99));updateSummary()" ${disabled}>
+                 oninput="clampEquip(this);updateSummary()" ${disabled}>
         </div>
       </div>`;
   }).join("");
