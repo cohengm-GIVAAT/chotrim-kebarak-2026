@@ -127,6 +127,7 @@ function validateStep(step) {
       const g2age  = parseInt(document.getElementById("guest2Age").value);
       if (!g2name) { alert("נא להזין שם מלא למשתתף 2"); return false; }
       if (!/^\d{9}$/.test(g2id)) { alert("ת.ז של משתתף 2 חייבת להיות 9 ספרות"); return false; }
+      if (!isValidIsraeliID(g2id)) { alert("ת.ז של משתתף 2 אינה תקינה — נא לבדוק שוב"); return false; }
       if (isNaN(g2age) || g2age < 12) { alert("גיל מינימלי למשתתף 2 הוא 12"); return false; }
     }
     if (parts >= 3) {
@@ -135,6 +136,7 @@ function validateStep(step) {
       const g3age  = parseInt(document.getElementById("guest3Age").value);
       if (!g3name) { alert("נא להזין שם מלא למשתתף 3"); return false; }
       if (!/^\d{9}$/.test(g3id)) { alert("ת.ז של משתתף 3 חייבת להיות 9 ספרות"); return false; }
+      if (!isValidIsraeliID(g3id)) { alert("ת.ז של משתתף 3 אינה תקינה — נא לבדוק שוב"); return false; }
       if (isNaN(g3age) || g3age < 12) { alert("גיל מינימלי למשתתף 3 הוא 12"); return false; }
     }
 
