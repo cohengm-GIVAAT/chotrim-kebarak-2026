@@ -52,7 +52,8 @@ function renderEquipCards() {
         <div class="equip-qty-row">
           <label>כמות:</label>
           <input type="number" id="equip_${item.id}" min="0" max="${qty !== "?" ? qty : 99}"
-                 value="0" oninput="updateSummary()" ${disabled}>
+                 value="0"
+                 oninput="this.value=Math.min(Math.max(0,parseInt(this.value)||0),parseInt(this.max||99));updateSummary()" ${disabled}>
         </div>
       </div>`;
   }).join("");
