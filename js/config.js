@@ -9,7 +9,7 @@ const CONFIG = {
 SHEET_URL: "https://script.google.com/macros/s/AKfycbxfwpjju7PCfM_XlXQTps3f1og4lRArH_2Ou-SZvdjUjgbUzn0ZolaW7jV6kgP0UmeG/exec",
   
   // ► קישור ל-PayBox האישי שלך
-  PAYBOX_URL: "https://www.payboxapp.com/",
+  PAYBOX_URL: "https://3ydbh.app.link/cY8vJ04t0Ub?_p=c11232dc90077af5ea038cfde9",
 
   // פרטי האירוע
   EVENT_NAME: "חותרים כברק 2026",
