@@ -80,12 +80,12 @@ function validateStep(step) {
       return false;
     }
 
-    // גיל — מינימום 12
+    // גיל — מינימום 9
     const ageEl = document.getElementById("age");
     const age = parseInt(ageEl.value);
-    if (isNaN(age) || age < 12) {
-      showError(ageEl, "גיל מינימלי להרשמה הוא 12");
-      alert("גיל מינימלי להרשמה הוא 12 שנים.");
+    if (isNaN(age) || age < 9) {
+      showError(ageEl, "גיל מינימלי להרשמה הוא 9");
+      alert("גיל מינימלי להרשמה הוא 9 שנים.");
       return false;
     }
 
@@ -128,7 +128,7 @@ function validateStep(step) {
       if (!g2name) { alert("נא להזין שם מלא למשתתף 2"); return false; }
       if (!/^\d{9}$/.test(g2id)) { alert("ת.ז של משתתף 2 חייבת להיות 9 ספרות"); return false; }
       if (!isValidIsraeliID(g2id)) { alert("ת.ז של משתתף 2 אינה תקינה — נא לבדוק שוב"); return false; }
-      if (isNaN(g2age) || g2age < 12) { alert("גיל מינימלי למשתתף 2 הוא 12"); return false; }
+      if (isNaN(g2age) || g2age < 9) { alert("גיל מינימלי למשתתף 2 הוא 9"); return false; }
     }
     if (parts >= 3) {
       const g3name = document.getElementById("guest3Name").value.trim();
@@ -137,7 +137,7 @@ function validateStep(step) {
       if (!g3name) { alert("נא להזין שם מלא למשתתף 3"); return false; }
       if (!/^\d{9}$/.test(g3id)) { alert("ת.ז של משתתף 3 חייבת להיות 9 ספרות"); return false; }
       if (!isValidIsraeliID(g3id)) { alert("ת.ז של משתתף 3 אינה תקינה — נא לבדוק שוב"); return false; }
-      if (isNaN(g3age) || g3age < 12) { alert("גיל מינימלי למשתתף 3 הוא 12"); return false; }
+      if (isNaN(g3age) || g3age < 9) { alert("גיל מינימלי למשתתף 3 הוא 9"); return false; }
     }
 
     return true;
@@ -346,6 +346,7 @@ async function submitForm() {
     houseNum:           (document.getElementById("houseNum") || {value:""}).value.trim(),
     city:               (document.getElementById("city")     || {value:""}).value.trim(),
     zipCode:            (document.getElementById("zipCode")  || {value:""}).value.trim(),
+    notes:              (document.getElementById("notes")     || {value:""}).value.trim(),
     participants:       document.getElementById("participants").value,
     guest2Name:         (document.getElementById("guest2Name") || {value:""}).value.trim(),
     guest2Id:           (document.getElementById("guest2Id")   || {value:""}).value.trim(),
